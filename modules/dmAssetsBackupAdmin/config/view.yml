@@ -1,0 +1,6 @@
+indexSuccess:
+
+  stylesheets:  [ admin.dataTable, admin.form, '/dmAssetsBackupPlugin/css/backupTable.css']
+
+  javascripts:  [ lib.dataTable, '/dmAssetsBackupPlugin/js/backupTable.js']
+  
