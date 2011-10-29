@@ -1,5 +1,7 @@
 default:
   dmAssetsBackupPlugin:
-    adapter:       tar
-    extension:     tar
-    mime:          'application/x-tar'
+    adapters:
+      dmAssetsBackupAdapterTar:
+        extensions:     tar
+        mimes:          'application/x-tar'
+        use:            tar

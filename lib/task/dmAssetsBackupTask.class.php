@@ -11,8 +11,6 @@ class dmAssetsBackupTask extends dmContextTask
     parent::configure();
 
     $this->addOptions(array(
-//      new sfCommandOption('module', null, sfCommandOption::PARAMETER_REQUIRED, 'The module name'),
-//      new sfCommandOption('nb', null, sfCommandOption::PARAMETER_OPTIONAL, 'nb records to create', 20),
     ));
 
     $this->namespace = 'dm';

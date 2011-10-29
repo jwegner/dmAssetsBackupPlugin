@@ -1,12 +1,9 @@
 <?php
 
-function formatfilesize( $data ) {
-    if( $data < 1024 ) return $data . ' '. __('bytes');
-    else if( $data < 1024000 ) return round( ( $data / 1024 ), 1 ) . ' '. __('KB');
-    else return round( ( $data / 1024000 ), 1 ) . ' ' . _('MB');
-}
-
+use_helper('Date');
+use_helper('File');
 $totalBackupSize = 0;
+
 
 echo $form->open();
 echo _open('table#dm_page_meta_table', array('json' => array(
@@ -15,6 +12,11 @@ echo _open('table#dm_page_meta_table', array('json' => array(
 echo _open('thead')._open('tr');
 echo _tag('th', _tag('input.check_all', array('type'=>'checkbox')));
 echo _tag('th', __('Date created'));
+echo _tag('th', __('Date accessed'));
+echo _tag('th', __('Date modified'));
+echo _tag('th', __('Group/Owner'));
+echo _tag('th', __('Permissions'));
+echo _tag('th', __('Mime'));
 echo _tag('th', __('Size'));
 echo _tag('th', __('Status'));
 echo _tag('th', __('Actions'));
@@ -24,26 +26,33 @@ echo _open('tbody');
 
 foreach ($files as $file) {
     echo _open('tr');
-        echo _tag('td', $form[dmString::slugify($file['path'])]->render());
-        echo _tag('td', date('r',$file['date']->getTimestamp()));
-        echo _tag('td', formatfilesize($file['filesize']));
-        echo _tag('td', ($file['filesize']) ? _tag('span.boolean.s16block.s16_tick') : _tag('span.boolean.s16block.s16_cross'));
+        echo _tag('td', $form[$file['file']]->render());
+        echo _tag('td', format_date($file['created'], 'g', $sf_user->getCulture()));
+        echo _tag('td', format_date($file['accessed'], 'g', $sf_user->getCulture()));
+        echo _tag('td', format_date($file['modified'], 'g', $sf_user->getCulture()));
+        echo _tag('td', file_get_group($file['group'], 'name') .'/' . file_get_owner($file['owner'], 'name'));
+        echo _tag('td', file_perms_to_human($file['permissions']));
+        echo _tag('td', $file['mime']);
+        echo _tag('td', file_format_size($file['size']));
+        echo _tag('td', ($file['file']) ? _tag('span.boolean.s16block.s16_tick') : _tag('span.boolean.s16block.s16_cross'));
         echo _open('td');
             echo _open('ul.sf_admin_td_actions');
                 echo _tag('li.sf_admin_action_download', 
                         _tag('a.s16.s16_download.dm_download_link.sf_admin_action', 
                                 array('title'=>__('Download this backup'), 'json'=>array(
                                     'link'=>  _link('dmAssetsBackupAdmin/download')->getHref(),
-                                    'file'=> $file['path']                                       
+                                    'file'=> $file['file']                                       
                                 )), __('Download')));
                 echo _tag('li.sf_admin_action_delete', 
                         _tag('a.s16.s16_delete.dm_delete_link.sf_admin_action', 
-                                array('title'=>__('Delete this backup'), 'json'=>array(                                    
+                                array('title'=>__('Delete this backup'), 'json'=>array(   
+                                    'link'=> _link('dmAssetsBackupAdmin/delete')->getHref(),
+                                    'file'=> $file['file'],
                                     'message' => __('Are you shore that you want to delete this backup file?')
                                 )), __('Delete')));
             echo _close('ul');
         echo _close('td');
-        $totalBackupSize += $file['filesize'];
+        $totalBackupSize += $file['size'];
     echo _close('tr');
 }
 
@@ -58,21 +67,20 @@ echo _open('div.dm_form_action_bar.dm_form_action_bar_bottom.clearfix');
             'message'=>__('Please select backup/s for batch delete.')
         ))));
     echo _close('ul');
-    echo _tag('div.dm_help_wrap', array('style'=>'float:right; margin-top:2px;'), __('Total backup stored in: '). " ". formatfilesize($totalBackupSize));
+    echo _tag('div.dm_help_wrap', array('style'=>'float:right; margin-top:2px;'), __('Total backup stored in: '). " ". file_format_size($totalBackupSize));
 echo _close('div');
 
 echo $form->renderHiddenFields();
 
-if (isset ($downloadFileName)) {
-    echo _open('div#flash.automatic_download', array('title'=>__('Close'), 'json'=>array(
-                'link'=>  _link('dmAssetsBackupAdmin/download')->getHref(),
+if (isset ($backupFile)) {
+    echo _open('div#flash.dm_download_link', array('title'=>__('Download this backup'), 'json'=>array(
                     'link'=>  _link('dmAssetsBackupAdmin/download')->getHref(),
-                    'file'=> $downloadFileName
+                    'file'=> $backupFile
                     )));
         echo _open('ul.flashs infos');
             echo _open('li.flash.ui-corner-all.info');
                 echo _tag('span.icon.fleft.mr5.s16block.s16_info');
-                echo __('Your download should start shortly, if not, please click here to start download.');
+                echo __('Click here to download just created backup.');
             echo _close('li');
         echo _close('ul');
     echo _close('div');

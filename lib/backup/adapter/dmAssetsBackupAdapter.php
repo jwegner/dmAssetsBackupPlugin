@@ -1,16 +1,20 @@
 <?php
 
-abstract class dmAssetsBackupAdapter
-{
-  protected
-  $filesystem,
-  $connection;
+abstract class dmAssetsBackupAdapter {
 
-  public function __construct(dmFilesystem $filesystem)
-  {
-    $this->filesystem = $filesystem;
-  }
+    protected
+    $filesystem,
+    $extension;
 
-  abstract public function execute($fileDestination, $directorySource);
-  
+    public function __construct(dmFilesystem $filesystem, $extension) {
+        $this->filesystem = $filesystem;
+        $this->extension = $extension;
+    }
+
+    protected function getFileName() {
+        return date('Y-m-d-H-i-s-u').'.'.$this->extension;
+    }
+
+
+    abstract public function execute($directoryDestination, $directorySource);
 }

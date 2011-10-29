@@ -1,15 +1,14 @@
 parameters:
 
   assets_backup.class:       dmAssetsBackup
-  assets_backup.adapters:
-    tar:                dmAssetsBackupAdapterTar
+  assets_backup.adapter:     dmAssetsBackupAdapterTar
   assets_backup.options:
-    dir:                  SF_ROOT_DIR/data/dm/backup/assets
-    file_format:          %%year%%-%%month%%-%%day%%-%%time%%
+    backup_dir:              SF_ROOT_DIR/data/dm/backup/assets
+    source_dir:              SF_UPLOAD_DIR
 
 services:
 
   assets_backup:
     class:                %assets_backup.class%
     shared:               false
-    arguments:            [ @filesystem, %assets_backup.adapters%, %assets_backup.options% ]
+    arguments:            [ @filesystem, %assets_backup.adapter%, %assets_backup.options% ]
