@@ -4,9 +4,9 @@ use_helper('Date');
 use_helper('File');
 $totalBackupSize = 0;
 
-
+echo _open('div.dm_assets_backup');
 echo $form->open();
-echo _open('table#dm_page_meta_table', array('json' => array(
+echo _open('table#dm_assets_backup_table', array('json' => array(
   'translation_url' => _link('dmPage/tableTranslation')->getHref()
 )));
 echo _open('thead')._open('tr');
@@ -34,7 +34,7 @@ foreach ($files as $file) {
         echo _tag('td', file_perms_to_human($file['permissions']));
         echo _tag('td', $file['mime']);
         echo _tag('td', file_format_size($file['size']));
-        echo _tag('td', ($file['file']) ? _tag('span.boolean.s16block.s16_tick') : _tag('span.boolean.s16block.s16_cross'));
+        echo _tag('td', ($file['file'] && $file['size']>0) ? _tag('span.boolean.s16block.s16_tick') : _tag('span.boolean.s16block.s16_cross'));
         echo _open('td');
             echo _open('ul.sf_admin_td_actions');
                 echo _tag('li.sf_admin_action_download', 
@@ -87,4 +87,4 @@ if (isset ($backupFile)) {
 }
 
 echo $form->close();
-
+echo _close('div');

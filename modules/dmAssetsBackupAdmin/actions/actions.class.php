@@ -24,20 +24,20 @@ class dmAssetsBackupAdminActions extends dmAdminBaseActions {
 
     public function executeBackup(sfWebRequest $request) {        
         if (!$request->isMethod('post') || !($request->hasParameter('_backup') || $request->hasParameter('_backup_and_download'))) $this->forward ('dmAssetsBackupAdmin', 'index'); 
-        $this->form = new dmForm();
-        $request->getParameterHolder()->remove('_backup');
+        $this->form = new dmForm();        
         if ($this->form->bindAndValid($request)) {            
             $backupFile = $this->backupService->execute();
             if ($backupFile) {                
                 $this->getUser()->setFlash('notice', 'Backup created successfully!');
-                if ($request->hasParameter('_backup_and_download')) {
-                    $request->getParameterHolder()->remove('_backup_and_download');
+                if ($request->hasParameter('_backup_and_download')) {                    
                     $this->getUser()->setAttribute('dmAssetsBackup/lastBackupFile', $backupFile);
                 }
             } else {
                 $this->getUser()->setFlash('error', 'Something went wrong, backup is not created properly.', false);
             }
         }
+        $request->getParameterHolder()->remove('_backup');
+        $request->getParameterHolder()->remove('_backup_and_download');
         $this->forward ('dmAssetsBackupAdmin', 'index'); 
     }
 

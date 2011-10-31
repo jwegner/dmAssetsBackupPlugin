@@ -1,5 +1,5 @@
 (function($) {
-    var $table = $('#dm_page_meta_table');
+    var $table = $('div.dm_assets_backup #dm_assets_backup_table');
    
     $table.dataTable({
         "oLanguage": {
@@ -15,7 +15,7 @@
         }]
     }); 
     
-    $('input.check_all').click(function(evt){
+    $('div.dm_assets_backup #dm_assets_backup_table input.check_all').click(function(evt){
         evt.stopImmediatePropagation();
         if (!$(this).prop('checked')) {
             $(this).closest('table').find('input[type=checkbox]').removeAttr('checked');
@@ -24,7 +24,7 @@
         };
     });
     
-    $('.dm_delete_link').click(function(){
+    $('div.dm_assets_backup .dm_delete_link').click(function(){
         var $button = $(this);
         var meta = $button.metadata();
         if (confirm(meta.message)) {
@@ -38,12 +38,12 @@
         return false;
     });
     
-    $('.dm_download_link').click(function(){
+    $('div.dm_assets_backup .dm_download_link').click(function(){
         var meta = $(this).metadata();
         window.open(meta.link + '?_file_name=' + meta.file);
     });        
         
-    $('.batch_delete_button').click(function(){
+    $('div.dm_assets_backup .batch_delete_button').click(function(){
         if ($(this).closest('form').find('input[type=checkbox]').filter(function(){
             if ($(this).hasClass('check_all')) return false;
             if ($(this).prop('checked')) return true;
